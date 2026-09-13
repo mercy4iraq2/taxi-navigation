@@ -98,7 +98,9 @@ class NavigationService {
             (uri) => _LaunchTarget(
               uri: uri,
               mode: uri.scheme == 'https'
-                  ? LaunchMode.platformDefault
+                  ? (_isWeb
+                        ? LaunchMode.platformDefault
+                        : LaunchMode.externalApplication)
                   : LaunchMode.externalApplication,
             ),
           )

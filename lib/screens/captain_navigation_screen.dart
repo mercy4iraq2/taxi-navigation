@@ -116,28 +116,32 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
               coordinates: widget.trip.formattedDestinationCoordinates,
             ),
             const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'ملخص الرحلة',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+            Semantics(
+              label:
+                  'ملخص الرحلة. المسافة التقديرية ${widget.trip.straightLineDistanceKm.toStringAsFixed(1)} كم. الوقت المتوقع ${_formatDuration(estimatedDuration)}.',
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'ملخص الرحلة',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'المسافة التقديرية: ${widget.trip.straightLineDistanceKm.toStringAsFixed(1)} كم',
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'الوقت المتوقع: ${_formatDuration(estimatedDuration)}',
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'المسافة التقديرية: ${widget.trip.straightLineDistanceKm.toStringAsFixed(1)} كم',
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'الوقت المتوقع: ${_formatDuration(estimatedDuration)}',
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

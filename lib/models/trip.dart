@@ -59,13 +59,15 @@ class Trip {
   }
 
   Duration get estimatedDriveDuration {
-    if (straightLineDistanceKm == 0) {
+    final distanceKm = straightLineDistanceKm;
+
+    if (distanceKm == 0) {
       return Duration.zero;
     }
 
     const averageCitySpeedKmPerHour = 35.0;
-    final estimatedMinutes =
-        (straightLineDistanceKm / averageCitySpeedKmPerHour * 60).round();
+    final estimatedMinutes = (distanceKm / averageCitySpeedKmPerHour * 60)
+        .round();
     return Duration(minutes: math.max(1, estimatedMinutes));
   }
 

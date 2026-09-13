@@ -43,6 +43,7 @@ void main() {
   testWidgets('tapping Google Maps shows loading state and disables actions', (
     WidgetTester tester,
   ) async {
+    final semantics = tester.ensureSemantics();
     final completer = Completer<void>();
     final service = FakeNavigationService(
       onOpenGoogleMaps: (_) => completer.future,
@@ -54,6 +55,7 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.bySemanticsLabel('جاري فتح خرائط Google'), findsOneWidget);
     expect(
       tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
       isNull,
@@ -68,6 +70,7 @@ void main() {
 
     expect(service.googleMapsOpenCount, 1);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+    semantics.dispose();
   });
 
   testWidgets('tapping Waze forwards the trip to the navigation service', (
@@ -85,6 +88,7 @@ void main() {
   testWidgets('tapping Waze shows loading state and disables actions', (
     WidgetTester tester,
   ) async {
+    final semantics = tester.ensureSemantics();
     final completer = Completer<void>();
     final service = FakeNavigationService(onOpenWaze: (_) => completer.future);
 
@@ -94,6 +98,7 @@ void main() {
     await tester.pump();
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.bySemanticsLabel('جاري فتح Waze'), findsOneWidget);
     expect(
       tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
       isNull,
@@ -108,6 +113,7 @@ void main() {
 
     expect(service.wazeOpenCount, 1);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+    semantics.dispose();
   });
 
   testWidgets('shows Arabic snackbar for navigation errors', (
