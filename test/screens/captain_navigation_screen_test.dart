@@ -189,6 +189,50 @@ void main() {
     expect(find.text('الإحداثيات المستلمة غير صالحة.'), findsOneWidget);
   });
 
+  testWidgets('shows zero-duration text for identical coordinates', (
+    WidgetTester tester,
+  ) async {
+    final zeroTrip = Trip.fromMap(const <String, dynamic>{
+      'startLatitude': 33.3152,
+      'startLongitude': 44.3661,
+      'destinationLatitude': 33.3152,
+      'destinationLongitude': 44.3661,
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CaptainNavigationScreen(
+          trip: zeroTrip,
+          navigationService: FakeNavigationService(),
+        ),
+      ),
+    );
+
+    expect(find.text('الوقت المتوقع: أقل من دقيقة'), findsOneWidget);
+  });
+
+  testWidgets('shows multi-hour Arabic duration text', (
+    WidgetTester tester,
+  ) async {
+    final longTrip = Trip.fromMap(const <String, dynamic>{
+      'startLatitude': 0.0,
+      'startLongitude': 0.0,
+      'destinationLatitude': 0.0,
+      'destinationLongitude': 0.63,
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CaptainNavigationScreen(
+          trip: longTrip,
+          navigationService: FakeNavigationService(),
+        ),
+      ),
+    );
+
+    expect(find.text('الوقت المتوقع: ساعتان'), findsOneWidget);
+  });
+
   testWidgets('shows generic snackbar for unexpected failures', (
     WidgetTester tester,
   ) async {

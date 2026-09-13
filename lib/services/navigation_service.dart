@@ -113,31 +113,28 @@ class NavigationService {
     List<_LaunchTarget> targets, {
     required String errorMessage,
   }) async {
-    Object? lastError;
-
     for (final target in targets) {
       try {
         final launched = await _launchUrl(target.uri, mode: target.mode);
         if (launched) {
           return;
         }
-      } catch (error) {
-        lastError = error;
+      } catch (_) {
+        continue;
       }
-    }
-
-    if (lastError != null) {
-      throw NavigationException('$errorMessage السبب: $lastError');
     }
 
     throw NavigationException(errorMessage);
   }
 
-  static Future<bool> _defaultLaunchUrl(Uri uri, {required LaunchMode mode}) {
+  static Future<bool> _defaultLaunchUrl(
+    Uri uri, {
+    required LaunchMode mode,
+  }) async {
     try {
-      return launchUrl(uri, mode: mode);
+      return await launchUrl(uri, mode: mode);
     } catch (_) {
-      return Future<bool>.value(false);
+      return false;
     }
   }
 }
