@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:taxi_navigation/models/trip.dart';
 import 'package:taxi_navigation/services/navigation_service.dart';
@@ -35,6 +36,7 @@ void main() {
       final launchedUris = <Uri>[];
       final launchModes = <LaunchMode?>[];
       final service = NavigationService(
+        platform: TargetPlatform.android,
         canLaunchUrlFn: (uri) async {
           checkedUris.add(uri);
           return uri.scheme == 'https';

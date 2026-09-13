@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:taxi_navigation/models/trip.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,18 +17,33 @@ class NavigationService {
   NavigationService({
     Future<bool> Function(Uri uri)? canLaunchUrlFn,
     LaunchUrlFn? launchUrlFn,
+    TargetPlatform? platform,
   }) : _canLaunchUrl = canLaunchUrlFn ?? canLaunchUrl,
-       _launchUrl = launchUrlFn ?? _defaultLaunchUrl;
+       _launchUrl = launchUrlFn ?? _defaultLaunchUrl,
+       _platform = platform ?? defaultTargetPlatform;
 
   final Future<bool> Function(Uri uri) _canLaunchUrl;
   final LaunchUrlFn _launchUrl;
+  final TargetPlatform _platform;
 
-  Uri buildGoogleMapsAppUri(Trip trip) {
-    return Uri.parse(
-      'comgooglemaps://?saddr=${trip.startLatitude},${trip.startLongitude}'
-      '&daddr=${trip.destinationLatitude},${trip.destinationLongitude}'
-      '&directionsmode=driving',
-    );
+  Uri? buildGoogleMapsAppUri(Trip trip) {
+    switch (_platform) {
+      case TargetPlatform.android:
+        return Uri.parse(
+          'google.navigation:q=${trip.destinationLatitude},${trip.destinationLongitude}&mode=d',
+        );
+      case TargetPlatform.iOS:
+        return Uri.parse(
+          'comgooglemaps://?saddr=${trip.startLatitude},${trip.startLongitude}'
+          '&daddr=${trip.destinationLatitude},${trip.destinationLongitude}'
+          '&directionsmode=driving',
+        );
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        return null;
+    }
   }
 
   Uri buildGoogleMapsUri(Trip trip) {
@@ -52,16 +68,19 @@ class NavigationService {
   }
 
   Future<void> openGoogleMaps(Trip trip) async {
-    await _launchFirstAvailable(<_LaunchTarget>[
-      _LaunchTarget(
-        uri: buildGoogleMapsAppUri(trip),
-        mode: LaunchMode.externalApplication,
-      ),
+    final targets = <_LaunchTarget>[
+      if (buildGoogleMapsAppUri(trip) case final appUri?)
+        _LaunchTarget(uri: appUri, mode: LaunchMode.externalApplication),
       _LaunchTarget(
         uri: buildGoogleMapsUri(trip),
         mode: LaunchMode.externalApplication,
       ),
-    ], errorMessage: 'تعذر فتح خرائط Google. تأكد من توفر التطبيق أو المتصفح.');
+    ];
+
+    await _launchFirstAvailable(
+      targets,
+      errorMessage: 'تعذر فتح خرائط Google. تأكد من توفر التطبيق أو المتصفح.',
+    );
   }
 
   Future<void> openWaze(Trip trip) async {

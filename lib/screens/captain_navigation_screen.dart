@@ -3,11 +3,11 @@ import 'package:taxi_navigation/models/trip.dart';
 import 'package:taxi_navigation/services/navigation_service.dart';
 
 class CaptainNavigationScreen extends StatefulWidget {
-  CaptainNavigationScreen({
+  const CaptainNavigationScreen({
     super.key,
     required this.trip,
-    NavigationService? navigationService,
-  }) : navigationService = navigationService ?? NavigationService();
+    this.navigationService,
+  });
 
   factory CaptainNavigationScreen.fromTripMap(
     Map<String, dynamic> tripMap, {
@@ -22,7 +22,7 @@ class CaptainNavigationScreen extends StatefulWidget {
   }
 
   final Trip trip;
-  final NavigationService navigationService;
+  final NavigationService? navigationService;
 
   @override
   State<CaptainNavigationScreen> createState() =>
@@ -30,6 +30,8 @@ class CaptainNavigationScreen extends StatefulWidget {
 }
 
 class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
+  late final NavigationService _navigationService =
+      widget.navigationService ?? NavigationService();
   bool _isLaunchingGoogleMaps = false;
   bool _isLaunchingWaze = false;
 
@@ -37,7 +39,7 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
     setState(() => _isLaunchingGoogleMaps = true);
     try {
       await _handleNavigation(
-        action: () => widget.navigationService.openGoogleMaps(widget.trip),
+        action: () => _navigationService.openGoogleMaps(widget.trip),
       );
     } finally {
       if (mounted) {
@@ -50,7 +52,7 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
     setState(() => _isLaunchingWaze = true);
     try {
       await _handleNavigation(
-        action: () => widget.navigationService.openWaze(widget.trip),
+        action: () => _navigationService.openWaze(widget.trip),
       );
     } finally {
       if (mounted) {
