@@ -74,6 +74,10 @@ class NavigationService {
   }
 
   static Future<bool> _defaultLaunchExternalUrl(Uri uri) {
+    if (uri.scheme == 'http' || uri.scheme == 'https') {
+      return launchUrl(uri);
+    }
+
     return launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 }

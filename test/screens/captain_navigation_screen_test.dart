@@ -82,6 +82,34 @@ void main() {
     expect(service.wazeOpenCount, 1);
   });
 
+  testWidgets('tapping Waze shows loading state and disables actions', (
+    WidgetTester tester,
+  ) async {
+    final completer = Completer<void>();
+    final service = FakeNavigationService(onOpenWaze: (_) => completer.future);
+
+    await pumpScreen(tester, service);
+
+    await tester.tap(find.text('فتح في Waze'));
+    await tester.pump();
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      isNull,
+    );
+    expect(
+      tester.widget<OutlinedButton>(find.byType(OutlinedButton)).onPressed,
+      isNull,
+    );
+
+    completer.complete();
+    await tester.pumpAndSettle();
+
+    expect(service.wazeOpenCount, 1);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
   testWidgets('shows Arabic snackbar for navigation errors', (
     WidgetTester tester,
   ) async {
