@@ -35,21 +35,27 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
 
   Future<void> _openGoogleMaps() async {
     setState(() => _isLaunchingGoogleMaps = true);
-    await _handleNavigation(
-      action: () => widget.navigationService.openGoogleMaps(widget.trip),
-    );
-    if (mounted) {
-      setState(() => _isLaunchingGoogleMaps = false);
+    try {
+      await _handleNavigation(
+        action: () => widget.navigationService.openGoogleMaps(widget.trip),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLaunchingGoogleMaps = false);
+      }
     }
   }
 
   Future<void> _openWaze() async {
     setState(() => _isLaunchingWaze = true);
-    await _handleNavigation(
-      action: () => widget.navigationService.openWaze(widget.trip),
-    );
-    if (mounted) {
-      setState(() => _isLaunchingWaze = false);
+    try {
+      await _handleNavigation(
+        action: () => widget.navigationService.openWaze(widget.trip),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLaunchingWaze = false);
+      }
     }
   }
 
