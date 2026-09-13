@@ -137,10 +137,13 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
                   ? null
                   : _openGoogleMaps,
               icon: _isLaunchingGoogleMaps
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                  ? const Semantics(
+                      label: 'جاري فتح Google Maps',
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     )
                   : const Icon(Icons.map_outlined),
               label: const Text('فتح في Google Maps'),
@@ -151,10 +154,13 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
                   ? null
                   : _openWaze,
               icon: _isLaunchingWaze
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                  ? const Semantics(
+                      label: 'جاري فتح Waze',
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     )
                   : const Icon(Icons.alt_route),
               label: const Text('فتح في Waze'),

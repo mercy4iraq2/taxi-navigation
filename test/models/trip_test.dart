@@ -38,5 +38,17 @@ void main() {
       expect(trip.straightLineDistanceKm, greaterThan(0));
       expect(trip.estimatedDriveDuration, isNot(Duration.zero));
     });
+
+    test('returns zero duration for identical coordinates', () {
+      final trip = Trip.fromMap(const <String, dynamic>{
+        'startLatitude': 33.3152,
+        'startLongitude': 44.3661,
+        'destinationLatitude': 33.3152,
+        'destinationLongitude': 44.3661,
+      });
+
+      expect(trip.straightLineDistanceKm, 0);
+      expect(trip.estimatedDriveDuration, Duration.zero);
+    });
   });
 }
