@@ -117,6 +117,8 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
             ),
             const SizedBox(height: 16),
             Semantics(
+              container: true,
+              excludeSemantics: true,
               label:
                   'ملخص الرحلة. المسافة التقديرية ${widget.trip.straightLineDistanceKm.toStringAsFixed(1)} كم. الوقت المتوقع ${_formatDuration(estimatedDuration)}.',
               child: Card(

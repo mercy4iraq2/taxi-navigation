@@ -80,9 +80,7 @@ class NavigationService {
         _LaunchTarget(uri: appUri, mode: LaunchMode.externalApplication),
       _LaunchTarget(
         uri: buildGoogleMapsUri(trip),
-        mode: _isWeb
-            ? LaunchMode.platformDefault
-            : LaunchMode.externalApplication,
+        mode: LaunchMode.platformDefault,
       ),
     ];
 
@@ -100,12 +98,7 @@ class NavigationService {
           uri: wazeUris.first,
           mode: LaunchMode.externalApplication,
         ),
-      _LaunchTarget(
-        uri: wazeUris.last,
-        mode: _isWeb
-            ? LaunchMode.platformDefault
-            : LaunchMode.externalApplication,
-      ),
+      _LaunchTarget(uri: wazeUris.last, mode: LaunchMode.platformDefault),
     ], errorMessage: 'تعذر فتح Waze. تأكد من تثبيت التطبيق أو توفر المتصفح.');
   }
 

@@ -68,7 +68,7 @@ void main() {
         expect(launchedUris[0], service.buildGoogleMapsAppUri(trip));
         expect(launchedUris[1], service.buildGoogleMapsUri(trip));
         expect(launchModes[0], LaunchMode.externalApplication);
-        expect(launchModes[1], LaunchMode.externalApplication);
+        expect(launchModes[1], LaunchMode.platformDefault);
       },
     );
 
@@ -89,7 +89,7 @@ void main() {
       expect(launchedUris[0], wazeUris.first);
       expect(launchedUris[1], wazeUris.last);
       expect(launchModes[0], LaunchMode.externalApplication);
-      expect(launchModes[1], LaunchMode.externalApplication);
+      expect(launchModes[1], LaunchMode.platformDefault);
     });
 
     test('falls back to Waze web URL when app launch throws', () async {
@@ -112,7 +112,7 @@ void main() {
       expect(launchedUris[0], wazeUris.first);
       expect(launchedUris[1], wazeUris.last);
       expect(launchModes[0], LaunchMode.externalApplication);
-      expect(launchModes[1], LaunchMode.externalApplication);
+      expect(launchModes[1], LaunchMode.platformDefault);
     });
 
     test(
