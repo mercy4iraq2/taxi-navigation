@@ -18,16 +18,13 @@ class NavigationException implements Exception {
 
 class NavigationService {
   NavigationService({
-    Future<bool> Function(Uri uri)? canLaunchUrlFn,
     LaunchUrlFn? launchUrlFn,
     TargetPlatform? platform,
     bool? isWeb,
-  }) : _canLaunchUrl = canLaunchUrlFn ?? canLaunchUrl,
-       _launchUrl = launchUrlFn ?? _defaultLaunchUrl,
+  }) : _launchUrl = launchUrlFn ?? _defaultLaunchUrl,
        _platform = platform ?? defaultTargetPlatform,
        _isWeb = isWeb ?? kIsWeb;
 
-  final Future<bool> Function(Uri uri) _canLaunchUrl;
   final LaunchUrlFn _launchUrl;
   final TargetPlatform _platform;
   final bool _isWeb;
@@ -114,11 +111,6 @@ class NavigationService {
     required String errorMessage,
   }) async {
     for (final target in targets) {
-      final canLaunch = await _canLaunchUrl(target.uri);
-      if (!canLaunch) {
-        continue;
-      }
-
       try {
         final launched = await _launchUrl(target.uri, mode: target.mode);
         if (launched) {
