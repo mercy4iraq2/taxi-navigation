@@ -36,6 +36,10 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
   bool _isLaunchingWaze = false;
 
   Future<void> _openGoogleMaps() async {
+    if (_isLaunchingGoogleMaps || _isLaunchingWaze) {
+      return;
+    }
+
     setState(() => _isLaunchingGoogleMaps = true);
     try {
       await _handleNavigation(
@@ -49,6 +53,10 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
   }
 
   Future<void> _openWaze() async {
+    if (_isLaunchingGoogleMaps || _isLaunchingWaze) {
+      return;
+    }
+
     setState(() => _isLaunchingWaze = true);
     try {
       await _handleNavigation(

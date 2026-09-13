@@ -87,8 +87,12 @@ class NavigationService {
     await _launchFirstAvailable(
       buildWazeUris(trip)
           .map(
-            (uri) =>
-                _LaunchTarget(uri: uri, mode: LaunchMode.externalApplication),
+            (uri) => _LaunchTarget(
+              uri: uri,
+              mode: uri.scheme == 'https'
+                  ? null
+                  : LaunchMode.externalApplication,
+            ),
           )
           .toList(),
       errorMessage: 'تعذر فتح Waze. تأكد من تثبيت التطبيق أو توفر المتصفح.',

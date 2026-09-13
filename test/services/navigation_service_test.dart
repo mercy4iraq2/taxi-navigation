@@ -56,6 +56,31 @@ void main() {
       expect(launchModes.single, LaunchMode.externalApplication);
     });
 
+    test('tries Waze app URL before the web fallback', () async {
+      final checkedUris = <Uri>[];
+      final launchedUris = <Uri>[];
+      final launchModes = <LaunchMode?>[];
+      final service = NavigationService(
+        canLaunchUrlFn: (uri) async {
+          checkedUris.add(uri);
+          return uri.scheme == 'https';
+        },
+        launchUrlFn: (uri, {mode}) async {
+          launchedUris.add(uri);
+          launchModes.add(mode);
+          return true;
+        },
+      );
+
+      await service.openWaze(trip);
+
+      final wazeUris = service.buildWazeUris(trip);
+      expect(checkedUris[0], wazeUris.first);
+      expect(checkedUris[1], wazeUris.last);
+      expect(launchedUris.single, wazeUris.last);
+      expect(launchModes.single, isNull);
+    });
+
     test(
       'throws Arabic error when all launch targets are unavailable',
       () async {
