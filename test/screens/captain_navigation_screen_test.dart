@@ -139,6 +139,20 @@ void main() {
     expect(find.text('الإحداثيات المستلمة غير صالحة.'), findsOneWidget);
   });
 
+  testWidgets('shows invalid-coordinate snackbar for Waze as well', (
+    WidgetTester tester,
+  ) async {
+    final service = FakeNavigationService(
+      onOpenWaze: (_) async => throw const FormatException('invalid'),
+    );
+
+    await pumpScreen(tester, service);
+    await tester.tap(find.text('فتح في Waze'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('الإحداثيات المستلمة غير صالحة.'), findsOneWidget);
+  });
+
   testWidgets('shows generic snackbar for unexpected failures', (
     WidgetTester tester,
   ) async {
