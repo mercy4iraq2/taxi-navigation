@@ -31,7 +31,7 @@ void main() {
       expect(uris.last.toString(), contains('https://www.waze.com/ul'));
     });
 
-    test('tries Google Maps app URL before the web fallback', () async {
+    test('stops after a successful Google Maps app launch', () async {
       final launchedUris = <Uri>[];
       final launchModes = <LaunchMode>[];
       final service = NavigationService(
@@ -39,16 +39,14 @@ void main() {
         launchUrlFn: (uri, {required mode}) async {
           launchedUris.add(uri);
           launchModes.add(mode);
-          return uri.scheme == 'https';
+          return true;
         },
       );
 
       await service.openGoogleMaps(trip);
 
-      expect(launchedUris[0], service.buildGoogleMapsAppUri(trip));
-      expect(launchedUris[1], service.buildGoogleMapsUri(trip));
-      expect(launchModes[0], LaunchMode.externalApplication);
-      expect(launchModes[1], LaunchMode.externalApplication);
+      expect(launchedUris.single, service.buildGoogleMapsAppUri(trip));
+      expect(launchModes.single, LaunchMode.externalApplication);
     });
 
     test(
@@ -115,6 +113,46 @@ void main() {
       expect(launchedUris[1], wazeUris.last);
       expect(launchModes[0], LaunchMode.externalApplication);
       expect(launchModes[1], LaunchMode.externalApplication);
+    });
+
+    test(
+      'uses platform-default browser launch for Google Maps on web',
+      () async {
+        final launchedUris = <Uri>[];
+        final launchModes = <LaunchMode>[];
+        final service = NavigationService(
+          platform: TargetPlatform.android,
+          isWeb: true,
+          launchUrlFn: (uri, {required mode}) async {
+            launchedUris.add(uri);
+            launchModes.add(mode);
+            return true;
+          },
+        );
+
+        await service.openGoogleMaps(trip);
+
+        expect(launchedUris.single, service.buildGoogleMapsUri(trip));
+        expect(launchModes.single, LaunchMode.platformDefault);
+      },
+    );
+
+    test('uses platform-default browser launch for Waze on web', () async {
+      final launchedUris = <Uri>[];
+      final launchModes = <LaunchMode>[];
+      final service = NavigationService(
+        isWeb: true,
+        launchUrlFn: (uri, {required mode}) async {
+          launchedUris.add(uri);
+          launchModes.add(mode);
+          return true;
+        },
+      );
+
+      await service.openWaze(trip);
+
+      expect(launchedUris.single, service.buildWazeUris(trip).last);
+      expect(launchModes.single, LaunchMode.platformDefault);
     });
 
     test(

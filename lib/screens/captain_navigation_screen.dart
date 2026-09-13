@@ -208,14 +208,41 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
     final minutes = duration.inMinutes.remainder(60);
 
     if (hours == 0) {
-      return '$minutes دقيقة';
+      return _formatArabicCount(
+        minutes,
+        singular: 'دقيقة واحدة',
+        dual: 'دقيقتان',
+        plural: 'دقائق',
+      );
     }
 
     if (minutes == 0) {
-      return '$hours ساعة';
+      return _formatArabicCount(
+        hours,
+        singular: 'ساعة واحدة',
+        dual: 'ساعتان',
+        plural: 'ساعات',
+      );
     }
 
-    return '$hours ساعة و $minutes دقيقة';
+    return '${_formatArabicCount(hours, singular: 'ساعة واحدة', dual: 'ساعتان', plural: 'ساعات')} و ${_formatArabicCount(minutes, singular: 'دقيقة واحدة', dual: 'دقيقتان', plural: 'دقائق')}';
+  }
+
+  String _formatArabicCount(
+    int value, {
+    required String singular,
+    required String dual,
+    required String plural,
+  }) {
+    if (value == 1) {
+      return singular;
+    }
+
+    if (value == 2) {
+      return dual;
+    }
+
+    return '$value $plural';
   }
 }
 

@@ -30,6 +30,10 @@ class NavigationService {
   final bool _isWeb;
 
   Uri? buildGoogleMapsAppUri(Trip trip) {
+    if (_isWeb) {
+      return null;
+    }
+
     switch (_platform) {
       case TargetPlatform.android:
         return Uri.parse(
@@ -89,21 +93,20 @@ class NavigationService {
   }
 
   Future<void> openWaze(Trip trip) async {
-    await _launchFirstAvailable(
-      buildWazeUris(trip)
-          .map(
-            (uri) => _LaunchTarget(
-              uri: uri,
-              mode: uri.scheme == 'https'
-                  ? (_isWeb
-                        ? LaunchMode.platformDefault
-                        : LaunchMode.externalApplication)
-                  : LaunchMode.externalApplication,
-            ),
-          )
-          .toList(),
-      errorMessage: 'تعذر فتح Waze. تأكد من تثبيت التطبيق أو توفر المتصفح.',
-    );
+    final wazeUris = buildWazeUris(trip);
+    await _launchFirstAvailable(<_LaunchTarget>[
+      if (!_isWeb)
+        _LaunchTarget(
+          uri: wazeUris.first,
+          mode: LaunchMode.externalApplication,
+        ),
+      _LaunchTarget(
+        uri: wazeUris.last,
+        mode: _isWeb
+            ? LaunchMode.platformDefault
+            : LaunchMode.externalApplication,
+      ),
+    ], errorMessage: 'تعذر فتح Waze. تأكد من تثبيت التطبيق أو توفر المتصفح.');
   }
 
   Future<void> _launchFirstAvailable(
@@ -125,7 +128,11 @@ class NavigationService {
   }
 
   static Future<bool> _defaultLaunchUrl(Uri uri, {required LaunchMode mode}) {
-    return launchUrl(uri, mode: mode);
+    try {
+      return launchUrl(uri, mode: mode);
+    } catch (_) {
+      return Future<bool>.value(false);
+    }
   }
 }
 
