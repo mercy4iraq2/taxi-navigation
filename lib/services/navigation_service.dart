@@ -109,9 +109,13 @@ class NavigationService {
         continue;
       }
 
-      final launched = await _launchUrl(target.uri, mode: target.mode);
-      if (launched) {
-        return;
+      try {
+        final launched = await _launchUrl(target.uri, mode: target.mode);
+        if (launched) {
+          return;
+        }
+      } catch (_) {
+        continue;
       }
     }
 

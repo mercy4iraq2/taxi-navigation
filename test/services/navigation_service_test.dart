@@ -56,6 +56,30 @@ void main() {
       expect(launchModes.single, LaunchMode.externalApplication);
     });
 
+    test(
+      'falls back to Google Maps web URL when app launch returns false',
+      () async {
+        final launchedUris = <Uri>[];
+        final launchModes = <LaunchMode?>[];
+        final service = NavigationService(
+          platform: TargetPlatform.android,
+          canLaunchUrlFn: (_) async => true,
+          launchUrlFn: (uri, {mode}) async {
+            launchedUris.add(uri);
+            launchModes.add(mode);
+            return uri.scheme == 'https';
+          },
+        );
+
+        await service.openGoogleMaps(trip);
+
+        expect(launchedUris[0], service.buildGoogleMapsAppUri(trip));
+        expect(launchedUris[1], service.buildGoogleMapsUri(trip));
+        expect(launchModes[0], LaunchMode.externalApplication);
+        expect(launchModes[1], LaunchMode.externalApplication);
+      },
+    );
+
     test('tries Waze app URL before the web fallback', () async {
       final checkedUris = <Uri>[];
       final launchedUris = <Uri>[];
@@ -79,6 +103,30 @@ void main() {
       expect(checkedUris[1], wazeUris.last);
       expect(launchedUris.single, wazeUris.last);
       expect(launchModes.single, isNull);
+    });
+
+    test('falls back to Waze web URL when app launch throws', () async {
+      final launchedUris = <Uri>[];
+      final launchModes = <LaunchMode?>[];
+      final service = NavigationService(
+        canLaunchUrlFn: (_) async => true,
+        launchUrlFn: (uri, {mode}) async {
+          launchedUris.add(uri);
+          launchModes.add(mode);
+          if (uri.scheme == 'waze') {
+            throw Exception('failed');
+          }
+          return true;
+        },
+      );
+
+      await service.openWaze(trip);
+
+      final wazeUris = service.buildWazeUris(trip);
+      expect(launchedUris[0], wazeUris.first);
+      expect(launchedUris[1], wazeUris.last);
+      expect(launchModes[0], LaunchMode.externalApplication);
+      expect(launchModes[1], isNull);
     });
 
     test(
