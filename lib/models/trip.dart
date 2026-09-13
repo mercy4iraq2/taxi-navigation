@@ -58,6 +58,8 @@ class Trip {
     return earthRadiusKm * c;
   }
 
+  /// Provides a rough, straight-line driving estimate using a fixed city speed.
+  /// It is not route-aware and should not be treated as live navigation ETA.
   Duration get estimatedDriveDuration {
     final distanceKm = straightLineDistanceKm;
 

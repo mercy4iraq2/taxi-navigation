@@ -225,7 +225,20 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
       );
     }
 
-    return '${_formatArabicCount(hours, singular: 'ساعة واحدة', dual: 'ساعتان', plural: 'ساعات')} و ${_formatArabicCount(minutes, singular: 'دقيقة واحدة', dual: 'دقيقتان', plural: 'دقائق')}';
+    final formattedHours = _formatArabicCount(
+      hours,
+      singular: 'ساعة واحدة',
+      dual: 'ساعتان',
+      plural: 'ساعات',
+    );
+    final formattedMinutes = _formatArabicCount(
+      minutes,
+      singular: 'دقيقة واحدة',
+      dual: 'دقيقتان',
+      plural: 'دقائق',
+    );
+
+    return '$formattedHours و $formattedMinutes';
   }
 
   String _formatArabicCount(
