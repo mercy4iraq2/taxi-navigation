@@ -13,6 +13,8 @@
 ## مثال ربط مع Firebase أو REST API
 
 ```dart
+import 'package:taxi_navigation/screens/captain_navigation_screen.dart';
+
 final tripPayload = {
   'startLatitude': 33.3152,
   'startLongitude': 44.3661,

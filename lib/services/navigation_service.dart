@@ -21,13 +21,16 @@ class NavigationService {
     Future<bool> Function(Uri uri)? canLaunchUrlFn,
     LaunchUrlFn? launchUrlFn,
     TargetPlatform? platform,
+    bool? isWeb,
   }) : _canLaunchUrl = canLaunchUrlFn ?? canLaunchUrl,
        _launchUrl = launchUrlFn ?? _defaultLaunchUrl,
-       _platform = platform ?? defaultTargetPlatform;
+       _platform = platform ?? defaultTargetPlatform,
+       _isWeb = isWeb ?? kIsWeb;
 
   final Future<bool> Function(Uri uri) _canLaunchUrl;
   final LaunchUrlFn _launchUrl;
   final TargetPlatform _platform;
+  final bool _isWeb;
 
   Uri? buildGoogleMapsAppUri(Trip trip) {
     switch (_platform) {
@@ -76,7 +79,9 @@ class NavigationService {
         _LaunchTarget(uri: appUri, mode: LaunchMode.externalApplication),
       _LaunchTarget(
         uri: buildGoogleMapsUri(trip),
-        mode: LaunchMode.externalApplication,
+        mode: _isWeb
+            ? LaunchMode.platformDefault
+            : LaunchMode.externalApplication,
       ),
     ];
 
