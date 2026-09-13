@@ -2,7 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:taxi_navigation/models/trip.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-typedef LaunchUrlFn = Future<bool> Function(Uri uri, {LaunchMode? mode});
+typedef LaunchUrlFn = Future<bool> Function(
+  Uri uri, {
+  required LaunchMode mode,
+});
 
 class NavigationException implements Exception {
   const NavigationException(this.message);
@@ -90,7 +93,7 @@ class NavigationService {
             (uri) => _LaunchTarget(
               uri: uri,
               mode: uri.scheme == 'https'
-                  ? null
+                  ? LaunchMode.platformDefault
                   : LaunchMode.externalApplication,
             ),
           )
@@ -122,11 +125,7 @@ class NavigationService {
     throw NavigationException(errorMessage);
   }
 
-  static Future<bool> _defaultLaunchUrl(Uri uri, {LaunchMode? mode}) {
-    if (mode == null) {
-      return launchUrl(uri);
-    }
-
+  static Future<bool> _defaultLaunchUrl(Uri uri, {required LaunchMode mode}) {
     return launchUrl(uri, mode: mode);
   }
 }
@@ -135,5 +134,5 @@ class _LaunchTarget {
   const _LaunchTarget({required this.uri, this.mode});
 
   final Uri uri;
-  final LaunchMode? mode;
+  final LaunchMode mode;
 }

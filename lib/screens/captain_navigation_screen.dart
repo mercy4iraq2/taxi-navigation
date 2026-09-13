@@ -142,48 +142,52 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            Semantics(
-              button: true,
-              enabled: !_isLaunchingGoogleMaps && !_isLaunchingWaze,
-              label: _isLaunchingGoogleMaps
-                  ? 'جاري فتح Google Maps'
-                  : 'فتح في Google Maps',
-              child: ExcludeSemantics(
-                child: FilledButton.icon(
-                  onPressed: _isLaunchingGoogleMaps || _isLaunchingWaze
-                      ? null
-                      : _openGoogleMaps,
-                  icon: _isLaunchingGoogleMaps
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.map_outlined),
-                  label: const Text('فتح في Google Maps'),
-                ),
+            if (_isLaunchingGoogleMaps)
+              const Semantics(
+                liveRegion: true,
+                label: 'جاري فتح خرائط Google',
+                child: SizedBox.shrink(),
+              ),
+            FilledButton.icon(
+              onPressed: _isLaunchingGoogleMaps || _isLaunchingWaze
+                  ? null
+                  : _openGoogleMaps,
+              icon: _isLaunchingGoogleMaps
+                  ? const ExcludeSemantics(
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : const Icon(Icons.map_outlined),
+              label: Text(
+                _isLaunchingGoogleMaps
+                    ? 'جاري فتح خرائط Google'
+                    : 'فتح في Google Maps',
               ),
             ),
             const SizedBox(height: 12),
-            Semantics(
-              button: true,
-              enabled: !_isLaunchingGoogleMaps && !_isLaunchingWaze,
-              label: _isLaunchingWaze ? 'جاري فتح Waze' : 'فتح في Waze',
-              child: ExcludeSemantics(
-                child: OutlinedButton.icon(
-                  onPressed: _isLaunchingGoogleMaps || _isLaunchingWaze
-                      ? null
-                      : _openWaze,
-                  icon: _isLaunchingWaze
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.alt_route),
-                  label: const Text('فتح في Waze'),
-                ),
+            if (_isLaunchingWaze)
+              const Semantics(
+                liveRegion: true,
+                label: 'جاري فتح Waze',
+                child: SizedBox.shrink(),
               ),
+            OutlinedButton.icon(
+              onPressed: _isLaunchingGoogleMaps || _isLaunchingWaze
+                  ? null
+                  : _openWaze,
+              icon: _isLaunchingWaze
+                  ? const ExcludeSemantics(
+                      child: SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : const Icon(Icons.alt_route),
+              label: Text(_isLaunchingWaze ? 'جاري فتح Waze' : 'فتح في Waze'),
             ),
           ],
         ),

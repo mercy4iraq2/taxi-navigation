@@ -34,14 +34,14 @@ void main() {
     test('tries Google Maps app URL before the web fallback', () async {
       final checkedUris = <Uri>[];
       final launchedUris = <Uri>[];
-      final launchModes = <LaunchMode?>[];
+      final launchModes = <LaunchMode>[];
       final service = NavigationService(
         platform: TargetPlatform.android,
         canLaunchUrlFn: (uri) async {
           checkedUris.add(uri);
           return uri.scheme == 'https';
         },
-        launchUrlFn: (uri, {mode}) async {
+        launchUrlFn: (uri, {required mode}) async {
           launchedUris.add(uri);
           launchModes.add(mode);
           return true;
@@ -60,11 +60,11 @@ void main() {
       'falls back to Google Maps web URL when app launch returns false',
       () async {
         final launchedUris = <Uri>[];
-        final launchModes = <LaunchMode?>[];
+        final launchModes = <LaunchMode>[];
         final service = NavigationService(
           platform: TargetPlatform.android,
           canLaunchUrlFn: (_) async => true,
-          launchUrlFn: (uri, {mode}) async {
+          launchUrlFn: (uri, {required mode}) async {
             launchedUris.add(uri);
             launchModes.add(mode);
             return uri.scheme == 'https';
@@ -83,13 +83,13 @@ void main() {
     test('tries Waze app URL before the web fallback', () async {
       final checkedUris = <Uri>[];
       final launchedUris = <Uri>[];
-      final launchModes = <LaunchMode?>[];
+      final launchModes = <LaunchMode>[];
       final service = NavigationService(
         canLaunchUrlFn: (uri) async {
           checkedUris.add(uri);
           return uri.scheme == 'https';
         },
-        launchUrlFn: (uri, {mode}) async {
+        launchUrlFn: (uri, {required mode}) async {
           launchedUris.add(uri);
           launchModes.add(mode);
           return true;
@@ -102,15 +102,15 @@ void main() {
       expect(checkedUris[0], wazeUris.first);
       expect(checkedUris[1], wazeUris.last);
       expect(launchedUris.single, wazeUris.last);
-      expect(launchModes.single, isNull);
+      expect(launchModes.single, LaunchMode.platformDefault);
     });
 
     test('falls back to Waze web URL when app launch throws', () async {
       final launchedUris = <Uri>[];
-      final launchModes = <LaunchMode?>[];
+      final launchModes = <LaunchMode>[];
       final service = NavigationService(
         canLaunchUrlFn: (_) async => true,
-        launchUrlFn: (uri, {mode}) async {
+        launchUrlFn: (uri, {required mode}) async {
           launchedUris.add(uri);
           launchModes.add(mode);
           if (uri.scheme == 'waze') {
@@ -126,7 +126,7 @@ void main() {
       expect(launchedUris[0], wazeUris.first);
       expect(launchedUris[1], wazeUris.last);
       expect(launchModes[0], LaunchMode.externalApplication);
-      expect(launchModes[1], isNull);
+      expect(launchModes[1], LaunchMode.platformDefault);
     });
 
     test(
@@ -134,7 +134,7 @@ void main() {
       () async {
         final service = NavigationService(
           canLaunchUrlFn: (_) async => false,
-          launchUrlFn: (_, {mode}) async => false,
+          launchUrlFn: (_, {required mode}) async => false,
         );
 
         expect(
