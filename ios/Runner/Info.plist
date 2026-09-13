@@ -22,6 +22,7 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>comgooglemaps</string>
 		<string>waze</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

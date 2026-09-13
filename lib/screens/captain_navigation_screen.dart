@@ -142,7 +142,9 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
                       child: SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: ExcludeSemantics(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       ),
                     )
                   : const Icon(Icons.map_outlined),
@@ -159,7 +161,9 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
                       child: SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: ExcludeSemantics(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       ),
                     )
                   : const Icon(Icons.alt_route),

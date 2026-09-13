@@ -125,6 +125,20 @@ void main() {
     expect(find.text('تعذر فتح Waze الآن.'), findsOneWidget);
   });
 
+  testWidgets('shows Arabic snackbar for invalid coordinates', (
+    WidgetTester tester,
+  ) async {
+    final service = FakeNavigationService(
+      onOpenGoogleMaps: (_) async => throw const FormatException('invalid'),
+    );
+
+    await pumpScreen(tester, service);
+    await tester.tap(find.text('فتح في Google Maps'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('الإحداثيات المستلمة غير صالحة.'), findsOneWidget);
+  });
+
   testWidgets('shows generic snackbar for unexpected failures', (
     WidgetTester tester,
   ) async {

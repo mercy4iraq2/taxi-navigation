@@ -1,6 +1,8 @@
 import 'package:taxi_navigation/models/trip.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+typedef LaunchUrlFn = Future<bool> Function(Uri uri, {LaunchMode? mode});
+
 class NavigationException implements Exception {
   const NavigationException(this.message);
 
@@ -13,12 +15,20 @@ class NavigationException implements Exception {
 class NavigationService {
   NavigationService({
     Future<bool> Function(Uri uri)? canLaunchUrlFn,
-    Future<bool> Function(Uri uri)? launchExternalUrlFn,
+    LaunchUrlFn? launchUrlFn,
   }) : _canLaunchUrl = canLaunchUrlFn ?? canLaunchUrl,
-       _launchExternalUrl = launchExternalUrlFn ?? _defaultLaunchExternalUrl;
+       _launchUrl = launchUrlFn ?? _defaultLaunchUrl;
 
   final Future<bool> Function(Uri uri) _canLaunchUrl;
-  final Future<bool> Function(Uri uri) _launchExternalUrl;
+  final LaunchUrlFn _launchUrl;
+
+  Uri buildGoogleMapsAppUri(Trip trip) {
+    return Uri.parse(
+      'comgooglemaps://?saddr=${trip.startLatitude},${trip.startLongitude}'
+      '&daddr=${trip.destinationLatitude},${trip.destinationLongitude}'
+      '&directionsmode=driving',
+    );
+  }
 
   Uri buildGoogleMapsUri(Trip trip) {
     return Uri.https('www.google.com', '/maps/dir/', <String, String>{
@@ -42,29 +52,42 @@ class NavigationService {
   }
 
   Future<void> openGoogleMaps(Trip trip) async {
-    await _launchFirstAvailable(<Uri>[
-      buildGoogleMapsUri(trip),
+    await _launchFirstAvailable(<_LaunchTarget>[
+      _LaunchTarget(
+        uri: buildGoogleMapsAppUri(trip),
+        mode: LaunchMode.externalApplication,
+      ),
+      _LaunchTarget(uri: buildGoogleMapsUri(trip)),
     ], errorMessage: 'تعذر فتح خرائط Google. تأكد من توفر التطبيق أو المتصفح.');
   }
 
   Future<void> openWaze(Trip trip) async {
     await _launchFirstAvailable(
-      buildWazeUris(trip),
+      buildWazeUris(trip)
+          .map(
+            (uri) => _LaunchTarget(
+              uri: uri,
+              mode: uri.scheme == 'https'
+                  ? null
+                  : LaunchMode.externalApplication,
+            ),
+          )
+          .toList(),
       errorMessage: 'تعذر فتح Waze. تأكد من تثبيت التطبيق أو توفر المتصفح.',
     );
   }
 
   Future<void> _launchFirstAvailable(
-    List<Uri> uris, {
+    List<_LaunchTarget> targets, {
     required String errorMessage,
   }) async {
-    for (final uri in uris) {
-      final canLaunch = await _canLaunchUrl(uri);
+    for (final target in targets) {
+      final canLaunch = await _canLaunchUrl(target.uri);
       if (!canLaunch) {
         continue;
       }
 
-      final launched = await _launchExternalUrl(uri);
+      final launched = await _launchUrl(target.uri, mode: target.mode);
       if (launched) {
         return;
       }
@@ -73,7 +96,18 @@ class NavigationService {
     throw NavigationException(errorMessage);
   }
 
-  static Future<bool> _defaultLaunchExternalUrl(Uri uri) {
-    return launchUrl(uri, mode: LaunchMode.externalApplication);
+  static Future<bool> _defaultLaunchUrl(Uri uri, {LaunchMode? mode}) {
+    if (mode == null) {
+      return launchUrl(uri);
+    }
+
+    return launchUrl(uri, mode: mode);
   }
+}
+
+class _LaunchTarget {
+  const _LaunchTarget({required this.uri, this.mode});
+
+  final Uri uri;
+  final LaunchMode? mode;
 }

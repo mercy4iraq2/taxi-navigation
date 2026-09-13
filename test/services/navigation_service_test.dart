@@ -34,7 +34,7 @@ void main() {
       () async {
         final service = NavigationService(
           canLaunchUrlFn: (_) async => false,
-          launchExternalUrlFn: (_) async => false,
+          launchUrlFn: (_, {mode}) async => false,
         );
 
         expect(
