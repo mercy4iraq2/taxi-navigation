@@ -213,6 +213,7 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
         singular: 'دقيقة واحدة',
         dual: 'دقيقتان',
         plural: 'دقائق',
+        countedSingular: 'دقيقة',
       );
     }
 
@@ -222,6 +223,7 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
         singular: 'ساعة واحدة',
         dual: 'ساعتان',
         plural: 'ساعات',
+        countedSingular: 'ساعة',
       );
     }
 
@@ -230,12 +232,14 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
       singular: 'ساعة واحدة',
       dual: 'ساعتان',
       plural: 'ساعات',
+      countedSingular: 'ساعة',
     );
     final formattedMinutes = _formatArabicCount(
       minutes,
       singular: 'دقيقة واحدة',
       dual: 'دقيقتان',
       plural: 'دقائق',
+      countedSingular: 'دقيقة',
     );
 
     return '$formattedHours و $formattedMinutes';
@@ -246,6 +250,7 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
     required String singular,
     required String dual,
     required String plural,
+    required String countedSingular,
   }) {
     if (value == 1) {
       return singular;
@@ -255,7 +260,11 @@ class _CaptainNavigationScreenState extends State<CaptainNavigationScreen> {
       return dual;
     }
 
-    return '$value $plural';
+    if (value >= 3 && value <= 10) {
+      return '$value $plural';
+    }
+
+    return '$value $countedSingular';
   }
 }
 

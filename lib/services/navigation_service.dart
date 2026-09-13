@@ -113,15 +113,21 @@ class NavigationService {
     List<_LaunchTarget> targets, {
     required String errorMessage,
   }) async {
+    Object? lastError;
+
     for (final target in targets) {
       try {
         final launched = await _launchUrl(target.uri, mode: target.mode);
         if (launched) {
           return;
         }
-      } catch (_) {
-        continue;
+      } catch (error) {
+        lastError = error;
       }
+    }
+
+    if (lastError != null) {
+      throw NavigationException('$errorMessage السبب: $lastError');
     }
 
     throw NavigationException(errorMessage);

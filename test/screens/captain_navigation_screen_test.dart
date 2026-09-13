@@ -40,6 +40,36 @@ void main() {
     expect(find.text('فتح في Waze'), findsOneWidget);
   });
 
+  testWidgets('fromTripMap builds the screen from external payload data', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CaptainNavigationScreen.fromTripMap(const <String, dynamic>{
+          'startLatitude': 33.3152,
+          'startLongitude': 44.3661,
+          'destinationLatitude': 33.3128,
+          'destinationLongitude': 44.3615,
+        }, navigationService: FakeNavigationService()),
+      ),
+    );
+
+    expect(find.text('33.315200, 44.366100'), findsOneWidget);
+    expect(find.text('33.312800, 44.361500'), findsOneWidget);
+  });
+
+  test('fromTripMap throws when payload coordinates are invalid', () {
+    expect(
+      () => CaptainNavigationScreen.fromTripMap(const <String, dynamic>{
+        'startLatitude': 'invalid',
+        'startLongitude': 44.3661,
+        'destinationLatitude': 33.3128,
+        'destinationLongitude': 44.3615,
+      }),
+      throwsFormatException,
+    );
+  });
+
   testWidgets('tapping Google Maps shows loading state and disables actions', (
     WidgetTester tester,
   ) async {
