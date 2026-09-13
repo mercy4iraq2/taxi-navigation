@@ -57,7 +57,10 @@ class NavigationService {
         uri: buildGoogleMapsAppUri(trip),
         mode: LaunchMode.externalApplication,
       ),
-      _LaunchTarget(uri: buildGoogleMapsUri(trip)),
+      _LaunchTarget(
+        uri: buildGoogleMapsUri(trip),
+        mode: LaunchMode.externalApplication,
+      ),
     ], errorMessage: 'تعذر فتح خرائط Google. تأكد من توفر التطبيق أو المتصفح.');
   }
 
@@ -65,12 +68,8 @@ class NavigationService {
     await _launchFirstAvailable(
       buildWazeUris(trip)
           .map(
-            (uri) => _LaunchTarget(
-              uri: uri,
-              mode: uri.scheme == 'https'
-                  ? null
-                  : LaunchMode.externalApplication,
-            ),
+            (uri) =>
+                _LaunchTarget(uri: uri, mode: LaunchMode.externalApplication),
           )
           .toList(),
       errorMessage: 'تعذر فتح Waze. تأكد من تثبيت التطبيق أو توفر المتصفح.',

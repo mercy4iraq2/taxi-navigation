@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:taxi_navigation/models/trip.dart';
 import 'package:taxi_navigation/services/navigation_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   final trip = Trip.fromMap(const <String, dynamic>{
@@ -27,6 +28,30 @@ void main() {
 
       expect(uris.first.toString(), 'waze://?ll=33.3128,44.3615&navigate=yes');
       expect(uris.last.toString(), contains('https://www.waze.com/ul'));
+    });
+
+    test('tries Google Maps app URL before the web fallback', () async {
+      final checkedUris = <Uri>[];
+      final launchedUris = <Uri>[];
+      final launchModes = <LaunchMode?>[];
+      final service = NavigationService(
+        canLaunchUrlFn: (uri) async {
+          checkedUris.add(uri);
+          return uri.scheme == 'https';
+        },
+        launchUrlFn: (uri, {mode}) async {
+          launchedUris.add(uri);
+          launchModes.add(mode);
+          return true;
+        },
+      );
+
+      await service.openGoogleMaps(trip);
+
+      expect(checkedUris[0], service.buildGoogleMapsAppUri(trip));
+      expect(checkedUris[1], service.buildGoogleMapsUri(trip));
+      expect(launchedUris.single, service.buildGoogleMapsUri(trip));
+      expect(launchModes.single, LaunchMode.externalApplication);
     });
 
     test(

@@ -10,6 +10,10 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="waze" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="comgooglemaps" />
+        </intent>
     </queries>
 
     <application
